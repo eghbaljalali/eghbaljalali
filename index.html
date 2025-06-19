@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eghbal Jalali Memorial</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* RESET & PALETTE */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--clr-bg:#fffdf9;--clr-primary:#003049;--clr-accent:#d88c00;--clr-muted:#555}
+    body{font-family:'Roboto',sans-serif;background:var(--clr-bg);color:var(--clr-primary);line-height:1.6;scroll-behavior:smooth}
+
+    /* HERO */
+    .hero{position:relative;min-height:100vh;background:url('images/goldensunset.jpeg') center/cover no-repeat fixed;display:flex;align-items:center;justify-content:center;text-align:center}
+    .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.65),rgba(0,0,0,.25)60%,rgba(0,0,0,.7))}
+    .hero-content{position:relative;z-index:1;color:#fff;animation:fadeInDown 1.2s ease-out forwards}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,6vw,4.5rem);margin-bottom:.5rem}
+    .hero p{font-size:1.25rem;margin-bottom:1.5rem}
+    .cta-btn{display:inline-block;padding:.85rem 2.1rem;background:var(--clr-accent);color:#fff;border-radius:30px;font-weight:500;text-decoration:none;transition:transform .3s,box-shadow .3s}
+    .cta-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 8px 18px rgba(0,0,0,.25)}
+
+    /* PALM & ROAD */
+    .palm{position:absolute;right:2%;bottom:18%;width:clamp(80px,12vw,140px);opacity:.9;animation:sway 5s ease-in-out infinite}
+    .road{position:absolute;bottom:0;left:0;width:100%;height:120px;background:#222;overflow:hidden}
+    .lane{position:absolute;top:50%;left:0;width:200%;height:6px;background:repeating-linear-gradient(90deg,#fff 0 40px,transparent 40px 80px);animation:dash 6s linear infinite;transform:translateY(-50%)}
+
+    /* FALLING LEAVES */
+    .leaf{position:absolute;top:-10vh;width:40px;opacity:.8;animation:leafFall linear infinite}
+    .leaf:nth-child(1){left:5%;animation-duration:14s}
+    .leaf:nth-child(2){left:25%;animation-duration:18s;animation-delay:2s}
+    .leaf:nth-child(3){left:45%;animation-duration:16s;animation-delay:4s}
+    .leaf:nth-child(4){left:65%;animation-duration:20s;animation-delay:1s}
+    .leaf:nth-child(5){left:85%;animation-duration:19s;animation-delay:5s}
+
+    /* STORY SECTIONS */
+    .story-section{
+        position:relative;
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+        color:#fff;
+        background-size:cover;
+        background-position:center;
+        background-attachment:fixed;
+        padding:5rem 1rem;
+    }
+    .story-section::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
+    .story-content{
+        position:relative;z-index:1;
+        padding:2.6rem;
+        max-width:860px;
+        background:rgba(0,0,0,.45);
+        border-radius:12px;
+        white-space: pre-line;
+    }
+    .story-content p{
+        margin:0 0 1rem;          /* spacing between <p> blocks   */
+    }
+    .story-content h2{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.6em}
+    /* put below your .story-photo rule */
+    .story-gallery{
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;          /* space between pictures */
+    justify-content:center;
+    }
+
+    .story-gallery img{
+    flex:1 1 240px;    /* grow/shrink, min width 240 px */
+    max-width:45%;     /* two‑up on desktop, stack on small screens */
+    border-radius:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,.35);
+    }
+
+
+    /* PANEL SECTIONS */
+    .panel{max-width:960px;margin:0 auto;padding:4rem 1rem}
+    .panel h2{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.6em;text-align:center;position:relative}
+    .panel h2::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-.25em;width:80px;height:4px;background:var(--clr-accent)}
+
+    /* QUOTES GRID */
+    .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem;margin-top:2rem}
+    .quote-card{background:#fff;border-left:4px solid var(--clr-accent);padding:1.2rem;font-style:italic;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+
+    /* TOC NAV */
+    .toc{position:fixed;top:50%;left:1rem;transform:translateY(-50%);background:#ffffffd9;padding:1rem 1.3rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:1000;width:220px}
+    .toc h3{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:.6rem;text-align:center;color:var(--clr-primary)}
+    .toc ul{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+    .toc a{color:var(--clr-primary);text-decoration:none;font-size:.9rem;transition:color .2s}
+    .toc a.active,.toc a:hover{color:var(--clr-accent);font-weight:500}
+    @media(max-width:700px){.toc{display:none}}
+
+    /* REVEAL */
+    .hidden{opacity:0;transform:translateY(40px);transition:all .9s ease-out}
+    .show{opacity:1;transform:translateY(0)}
+
+    /* FOOTER */
+    footer{text-align:center;padding:2.5rem 1rem;color:var(--clr-muted);font-size:.9rem}
+
+    /* KEYFRAMES */
+    @keyframes dash{from{transform:translateX(0) translateY(-50%)}to{transform:translateX(-50%) translateY(-50%)}}
+    @keyframes sway{0%,100{transform:rotate(0deg)}50%{transform:rotate(3deg)}}
+    @keyframes fadeInDown{from{opacity:0;transform:translateY(-40px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes leafFall{0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(60vh) rotate(90deg)}100%{transform:translateY(120vh) rotate(180deg)}}
+  </style>
+</head>
+<body>
+  <!-- DECOR -->
+  <img src="images/leaf.png" class="leaf" alt="" />
+  <img src="images/leaf.png" class="leaf" alt="" />
+  <img src="images/leaf.png" class="leaf" alt="" />
+  <img src="images/leaf.png" class="leaf" alt="" />
+  <img src="images/leaf.png" class="leaf" alt="" />
+  <img src="images/leaf.png" class="leaf" alt="" />
+  <img src="images/leaf.png" class="leaf" alt="" />
+  <img src="images/leaf.png" class="leaf" alt="" />
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1 class="hidden">Eghbal Jalali Memorial</h1>
+      <p class="hidden">To my father, I wish you were here.<br /><em>— Daniel Jalali</em></p>
+      <a href="#tapestry-strength" class="cta-btn hidden">Begin the Journey</a>
+    </div>
+    <img src="images/palm-tree.png" alt="Palm" class="palm" />
+    <div class="road"><div class="lane"></div></div>
+  </header>
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc" aria-label="Table of Contents">
+    <h3>Life Chapters</h3>
+    <ul>
+      <li><a href="#contribute">Contribute</a></li>
+      <li><a href="#tapestry-strength">Tapestry of Strength</a></li>
+      <li><a href="#american-odyssey">American Odyssey</a></li>
+      <li><a href="#engineering-legacy">Engineering Legacy</a></li>
+      <li><a href="#philanthropic-heart">Philanthropic Heart</a></li>
+      <li><a href="#journey-health">Journey & Resilience</a></li>
+      <li><a href="#love-of-nature">Love of Nature</a></li>
+      <li><a href="#fabric-life">Fabric of Life</a></li>
+      <li><a href="#family">Family North Star</a></li>
+      <li><a href="#skills">Many Skills</a></li>
+      <li><a href="#legacy">Unforgettable Legacy</a></li>
+      <li><a href="#gratitude">Gratitude</a></li>
+    </ul>
+  </nav>
+
+  <!-- CONTRIBUTE PANEL -->
+  <section id="contribute" class="panel hidden">
+    <h2>Contribute a Memory</h2>
+    <p>This memorial grows richer with every story. Share photographs, anecdotes, or milestones you remember.</p>
+    <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSeAHKlu5eDcxq7uIOQT3h7wFZKgQCEk8JsZs9F5d3wgBU-wlw/viewform?usp=sf_link" target="_blank">Submit via Google Form →</a></p>
+  </section>
+
+  <!-- QUOTES -->
+  <section class="panel hidden">
+    <h2>Popular Quotes</h2>
+    <div class="quotes">
+      <div class="quote-card">“You can take a donkey to a river, but you can’t make it drink.”</div>
+      <div class="quote-card">“I love you more than you can ever believe.”</div>
+      <div class="quote-card">“A hard‑working man with big dreams and passion can do anything.”</div>
+      <div class="quote-card">“I built these roads!”</div>
+    </div>
+  </section>
+
+  <!-- STORY SECTIONS (each with unique BG) -->
+   <section id="tapestry-strength" class="story-section hidden" style="background-image:url('images/isfahan.jpg')">
+    <div class="story-content">
+        <h2>A Tapestry of Strength and Resilience</h2>
+        <p>
+
+        <div class="story-gallery">
+            <img src="images/iranflag.png" alt="">
+            <img src="images/iranbackground.jpg" alt="">
+        </div>     
+
+‎
+
+            In the small town of Masjed Soleyman, Iran, on May 22, 1952, a child was born who would grow up to embody the very ideals of perseverance, ingenuity, and love. 
+Eghbal Jalali entered a world that would challenge him early, yet instead of breaking him, these experiences only steeled his resolve and formed the bedrock of his character. By the time he was 15, both his parents had passed away, thrusting him and his brothers, including Hossein Jalali, into a life of premature responsibility and hardship.  
+
+‎
+
+In a society where family forms the cornerstone of emotional and financial stability, losing both parents could have been a disastrous setback. Yet Eghbal and his brothers found strength in unity, caring for one another as they navigated the complexities of adolescence without parental guidance. These were formative years that tested his resolve but also shaped his undying commitment to family and community. The young man who emerged from this crucible of adversity was resolute, caring, and above all, hopeful about the potential for positive change.
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalearly.jpg" alt="">
+        </div>    
+
+‎
+
+Eghbal's childhood trials laid the foundation for the life philosophy he would come to espouse: that challenges are opportunities for growth, that hard work can surmount almost any obstacle, and that a commitment to ethical conduct and generosity toward others can help one achieve not only personal success but a legacy that enriches entire communities. This unwavering belief in the power of resilience and hard work would serve as a compass throughout his life, steering him through the myriad challenges and triumphs that awaited him.
+
+        </p>
+    </div>
+  </section>
+  <section id="american-odyssey" class="story-section hidden" style="background-image:url('images/americaflag.jpg')">
+    <div class="story-content">
+        <h2>The American Odyssey</h2>
+        <p>
+            It was with this background—imbued with determination, guided by a powerful moral compass, and bolstered by the support of his brothers—that Eghbal approached his next great adventure. At the age of 22, he set his sights on a realm that had long been the canvas of dreams for countless people around the world: America. Leaving behind the familiar landscapes of Masjed Soleyman and the comforting presence of his siblings, Eghbal embarked on a journey filled with unknowns, carrying little more than a suitcase and a heart full of hopes.
+
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/americandiner.jpg" alt="">
+        </div>    
+
+‎
+
+This monumental decision was neither impulsive nor casual; it was the calculated step of a young man who understood the sacrifices it entailed. With his innate resolve, Eghbal knew that he would face hurdles—from linguistic barriers to cultural differences, from the initial struggle for financial stability to the navigation of an entirely new educational system. But guided by his enduring moral compass, Eghbal saw in America not just a land of challenges, but a land of opportunities—opportunities that would enable him to further his education, to build a career, and perhaps most importantly, to create a legacy of positive impact for his family and community.
+
+
+‎
+
+Upon his arrival in the United States, the challenges were immediate and palpable. As many immigrants before him had done, Eghbal took up employment in local restaurants to support himself while attending school. This experience in itself was a crucible of sorts, testing his resolve daily. Yet Eghbal took it all in stride, viewing each day as a lesson, each obstacle as a teacher, and each setback as an opportunity for growth. Through hard work, persistence, and an indomitable spirit, he not only supported himself but also enrolled in higher education, eventually earning his bachelor's degree in civil engineering from Florida International University and supplementing this with courses at the University of Florida.
+
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbaltool.jpg" alt="">
+        </div>    
+
+‎
+
+But Eghbal's journey was about more than personal achievement. It was about laying down roots in a new homeland without ever forgetting the soil from which he had sprung. He kept close ties with his family back in Iran, helping them in every way he could manage, from financial support to moral encouragement. At the same time, he began forming new bonds in his adopted country, always approaching people with the same genuine kindness and respect that had guided his actions throughout his life.
+
+
+        </p>
+    </div>
+  </section>
+  <section id="engineering-legacy" class="story-section hidden" style="background-image:url('images/engineering.jpg')">
+    <div class="story-content">
+        <h2>The American Dream and a Legacy in Engineering</h2>
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/fdot.png" alt="">
+            <img src="images/floridaroad.jpg" alt="">
+        </div>    
+
+‎
+
+
+Civil engineering was more than a profession for Eghbal; it was a calling. It was the manifestation of his insatiable curiosity and his deep-rooted desire to better the world around him. Every road he helped design, every infrastructure project he managed, served as an expression of his belief in community, progress, and the power of human ingenuity. His work with Florida’s Department of Transportation was particularly noteworthy. There, Eghbal's projects didn't just modify landscapes; they transformed lives by creating safer, more efficient highways. It’s no surprise that his dedication was formally recognized through many awards—accolades that signified not just his professional abilities but also his commitment to public service.
+
+‎
+
+
+Beyond his role in the public sector, Eghbal channeled his expertise into entrepreneurial ventures, founding his own land development and construction business. Located primarily in Southwest Ranches but extending its influence as far as Orlando, his business was an amalgamation of his many skills and passions. It was not merely a means for financial gain but an avenue to explore the full scope of his engineering creativity. His entrepreneurial spirit was infused with a sense of purpose; each project undertaken was a step toward creating a more functional and beautiful environment for people to live in.
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalconstruction.jpg" alt="">
+        </div>    
+
+‎
+
+Eghbal’s contributions to the field of civil engineering were not isolated achievements; they were part of a larger legacy he left behind—a legacy rooted in innovation, integrity, and the relentless pursuit of excellence. Whether it was through the highways that ease our journeys or the businesses that contribute to local economies, Eghbal's work continues to serve communities, proving that well-engineered projects are indeed a form of public service.
+
+‎‎‎‎‎‎‎
+
+
+E‎ghbal Jalali’s impact on the world of engineering is manifold: he was a designer, a creator, a problem-solver, and a visionary. But perhaps most importantly, he was a role model for future engineers, demonstrating that technical prowess coupled with a strong ethical foundation can indeed change the world for the better. In this way, his American Dream became far more than a personal triumph; it became a lasting legacy in the field of engineering.
+
+
+        </p>
+    </div>
+  </section>
+  <section id="philanthropic-heart" class="story-section hidden" style="background-image:url('images/philantrapy.jpg')">
+    <div class="story-content">
+        <h2>A Philanthropic Heart</h2>
+        <p>
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalsmiling.jpg" alt="">
+        </div>    
+
+‎
+
+            In a life marked by professional success and personal achievements, one of the most striking features of Eghbal Jalali's character was his philanthropic heart. Generosity wasn't merely an attribute for him; it was a way of life. Whether it was helping his family traverse the difficulties of immigration and financial instability, or offering his friends a shoulder to lean on, Eghbal approached philanthropy as another form of engineering—a way to construct a better, more compassionate world around him.
+
+His entrepreneurial spirit, so evident in his successful land development and construction business, was equally manifest in his charitable endeavors. He viewed his resources not as a personal treasury, but as a trust to be used for the good of those around him. And this philosophy extended well beyond his immediate family. Eghbal’s acts of kindness and generosity resonated in communities across the globe, from his native Iran to Germany and London, as evidenced by the international outpouring of love and respect at his passing.
+
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalfriends.jpg" alt="">
+            <img src="images/eghbalwedding.jpg" alt="">
+        </div>    
+
+‎
+
+Eghbal's approach to philanthropy was both heartfelt and pragmatic. He knew that financial contributions could alleviate immediate hardships, but he also understood the transformative power of opportunity. This led him to offer jobs or financial support to friends and acquaintances in need, providing them not just momentary relief, but a chance at a brighter future. It was his belief that giving someone an opportunity was akin to giving them the tools to build their own destiny—a lesson he had learned through his own life's journey.
+
+
+‎
+
+Even his casual conversations would often center around how one could improve their lives, focusing on the importance of education, hard work, and ethical conduct. In these ways and more, his philanthropic heart found expression not just in his deeds but also in his words, inspiring those fortunate enough to know him to strive for their best selves.
+
+
+‎
+
+Beyond the material and practical realms, Eghbal's philanthropy extended to a deeply emotional and psychological level. His ever-present smile, his enduring optimism, and his steadfast loyalty were as much a part of his charitable nature as any monetary donation. These emotional gifts, freely given, had the power to uplift spirits and transform lives in ways that defy quantification.
+
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalsmiling-2.png" alt="">
+            <img src="images/eghbaleating.jpg" alt="">
+        </div>    
+
+‎
+
+In sum, Eghbal Jalali's philanthropic heart was a beacon of kindness and compassion in a world that often seems bereft of both. Through a combination of financial generosity, practical assistance, and emotional support, he wove a legacy of benevolence that stretched across continents, touching lives from all walks of life. Though he has departed from this world, the impact of his giving remains—a fitting tribute to a man who spent his life building not just roads and buildings, but bridges to a better world for all.
+        </p>
+    </div>
+  </section>
+  <section id="journey-health" class="story-section hidden" style="background-image:url('images/redbackground.avif')">
+    <div class="story-content">
+        <h2>A Journey of Awareness and Resilience</h2>
+        <p>
+            Health wasn't merely a clinical term for Eghbal Jalali; it was a lived experience, a narrative of struggle, and ultimately, a story of triumph over adversity. Living with diabetes, Eghbal faced daily challenges that many might find overwhelming. Yet, rather than succumbing to the limitations of the condition, he chose to rise above them.
+
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalpose.jpg" alt="">
+        </div>    
+
+‎
+
+Understanding the serious implications of diabetes, Eghbal made substantial lifestyle adjustments, not just for his sake but also to set an example for others. His journey towards better health began with a surgery designed to help him lose weight—a risky but necessary step towards long-term well-being. And Eghbal didn’t stop there; he committed to a disciplined diet and a conscious lifestyle, demonstrating a level of self-care that inspired everyone around him.
+
+
+‎
+
+More than just adhering to a medical regimen, Eghbal transformed his relationship with his own health into a form of advocacy. He would often talk to friends, family, and even casual acquaintances about the dangers of diabetes and the importance of proper nutrition and exercise. It was more than advice; it was a call to action. His own struggles served as a stark but hopeful lesson about what could be achieved with informed choices and dedicated effort.
+        </p>
+    </div>
+  </section>
+
+  <section id="love-of-nature" class="story-section hidden" style="background-image:url('images/floridanature.jpeg')">
+    <div class="story-content">
+      <h2>Love of Nature</h2>
+      <p>
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalfishing.jpg" alt="">
+        </div>    
+
+‎
+
+        For Eghbal Jalali, the natural world was not just a backdrop to human endeavors; it was a source of endless fascination, solace, and inspiration. His love for nature was far more than a hobby or a passing interest—it was an integral part of his worldview, reflected in both his professional and personal life.
+
+In every setting where he resided, Eghbal sought to bring a piece of nature into his home through gardening. From dragonfruit to coconut trees, he cultivated a small oasis in his backyard, not merely as an aesthetic choice but as a symbol of life's resilience and beauty. These gardens were not just for his own enjoyment but became a place where family and friends could experience the simple, unvarnished joys that nature provides.
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/cocounuts.jpg" alt="">
+        </div>    
+
+‎
+
+He also cherished moments spent discussing the beauty of a sunset, the feel of the breeze on a perfect day, or the complex, awe-inspiring mechanisms that drive natural processes. These conversations were never merely idle chatter; they served as gentle reminders of our shared responsibility to appreciate and protect the environment.
+
+‎
+
+His respect for nature was part of a broader philosophy that espoused harmony, balance, and sustainable living. Through his gardens, his professional decisions, and his daily conversations, Eghbal demonstrated that a love of nature is not just a personal preference but a communal asset, enriching not just our own lives but those of generations to come.
+      </p>
+    </div>
+  </section>
+
+  <section id="fabric-life" class="story-section hidden" style="background-image:url('images/diningtable.jpg')">
+    <div class="story-content">
+      <h2>The Fabric of a Rich Life</h2>
+      <p>
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbaldrinks.png" alt="">
+        </div>    
+
+‎
+
+        If there was a single thread that wove together the many facets of Eghbal Jalali's life, it was his profound sense of community. Whether at home in Florida or reaching back to his roots in Iran, Eghbal recognized that individual success was inextricably linked to the welfare of the community at large.
+
+
+‎
+
+Known for his friendly demeanor and approachable nature, Eghbal took the time to get to know people wherever he went—from the owners of local restaurants like Einstein Bagels on Nob Hill Rd and Broadway Bagels at Cleary Blvd, to neighbors and business associates. It was not unusual for him to strike up a conversation with complete strangers, leaving them feeling like they’d known him for years.
+
+
+‎
+
+Within his professional realm, Eghbal's community-centric approach was also evident. His work as a civil engineer and project manager didn't just serve a functional purpose; it facilitated the well-being of entire communities. His projects helped people get to work safely, enabled efficient transport, and even contributed to local economies. Every brick laid and every road built was a contribution to a collective future.
+      </p>
+    </div>
+  </section>
+
+  <section id="family" class="story-section hidden" style="background-image:url('images/love.jpg')">
+    <div class="story-content">
+      <h2>Family: His Guiding North Star</h2>
+      <p>
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalwife.jpg" alt="">
+        </div>    
+
+‎
+
+        Family was the cornerstone of Eghbal Jalali's life, the compass by which he navigated every decision and action. His wife, Parivash Jaberi, was a critical part of this familial foundation, and together they built not just a family, but a closely-knit community that extended its warmth to everyone who crossed its threshold.
+
+‎
+
+His son, Daniel Jalali, and his other son, Neema Jalali, were both living testaments to the values he held dear—education, hard work, and an unwavering moral compass. The relationship between father and sons was not just one of lineage but of shared visions and dreams. The bond was deep, the respect mutual, and the love unconditional.
+
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalfamily.jpg" alt="">
+        </div>    
+
+‎
+
+His brother, Hossein Jalali, was a part of his journey, a shared story that began in their early years in Iran. The bond between them was a reflection of Eghbal’s broader philosophy that family was not just an accident of birth but a conscious commitment to mutual support and shared values.
+
+‎
+
+For Eghbal, family was an expansive term that included anyone he was committed to supporting, whether through blood ties or through bonds forged by friendship and shared experiences. He was the kind of man who could buy a house for his sister and sell his property in Iran to support his brother's move to London. He would also go to great lengths to help his wife's in-law family secure a green card.</p>
+    </div>
+  </section>
+
+  <section id="skills" class="story-section hidden" style="background-image:url('images/toolbox.png')">
+    <div class="story-content">
+      <h2>The Man of Many Skills</h2>
+      <p>
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalbiking.jpg" alt="">
+        </div>    
+
+‎
+
+        Eghbal Jalali was not merely an engineer or an entrepreneur; he was a Renaissance man with a wide array of skills that he passionately honed throughout his life. His tactile nature manifested early, and it was an integral part of who he was. To Eghbal, the world was not just a stage for theoretical ideas but a playground for practical action.
+
+
+‎
+
+His love for working with his hands extended from the professional to the personal. Fixing up parts of his home or tinkering with cars were activities that gave him genuine pleasure. These were not chores or tasks but rather opportunities for creative expression and problem-solving. His toolbox was just as important to him as his desk, each filled with instruments of his many talents.
+
+
+‎
+
+This hands-on approach extended to his business ventures. While he could have easily delegated tasks, Eghbal was known for his active participation in every aspect of his work. Whether it was laying out plans for a new construction project or overseeing the day-to-day operations of his business, he was deeply involved, deriving joy from the nitty-gritty details that many would overlook.
+
+
+‎
+
+But his skills weren’t confined to just physical and intellectual tasks. Eghbal had the rare ability to connect with people, to turn acquaintances into friends, and friends into family. This skill—often underrated—was key to his success, both personally and professionally. His ability to form relationships contributed significantly to his business, adding a layer of trust and mutual respect that cannot be easily quantified.
+
+‎
+
+His incessant work ethic was not a product of necessity but of love—a love for his work, a love for creation, and a love for contributing something tangible to the world. Despite the fullness of his days, Eghbal very rarely took breaks, not because he couldn’t, but because he found immense satisfaction in his work.
+
+
+      </p>
+    </div>
+  </section>
+
+  <section id="legacy" class="story-section hidden" style="background-image:url('images/bricks.jpg')">
+    <div class="story-content">
+      <h2>An Unforgettable Legacy</h2>
+      <p>
+‎
+
+        <div class="story-gallery">
+            <img src="images/eghbalmemorial.jpg" alt="">
+        </div>    
+
+‎
+
+        In the annals of lives well-lived, the story of Eghbal Jalali stands out as a resounding testament to the power of resilience, ambition, love, and philanthropy. Though he faced trials that could have easily broken a lesser man—losing his parents at a young age, navigating a new culture thousands of miles away from his birthplace, and contending with health challenges—he emerged not just successful but deeply influential, leaving an indelible impact on the lives of those he touched.
+
+
+The over 300 attendees at his funeral in the United States, along with prayers sent from Iran, Germany, and London, bear witness to a life that was universally admired and respected. It's rare for one man to inspire such a vast and varied circle of love and respect, and this itself is a tribute to the kind of man Eghbal was.
+
+
+His life was a tapestry woven with threads of hard work, love, resilience, and unending kindness. As his story is retold and remembered, each facet of his life will continue to inspire, each achievement will stand as a benchmark, and his legacy will remain unforgettable. Indeed, Eghbal Jalali left the world richer than he found it, and for those who had the privilege to know him, life will never be the same.
+      </p>
+    </div>
+  </section>
+
+  <section id="gratitude" class="story-section hidden" style="background-image:url('images/cashews.jpeg')">
+    <div class="story-content">
+        <h2>With Heartfelt Gratitude</h2>
+        <p>
+        To every friend, family member, and kind stranger who helped shape this memorial—thank you.
+        Your photos, stories, and encouragement keep Eghbal’s legacy alive. 
+        If you have a memory to share, please add it; every detail matters.
+        And above all, cherish the people you love today—tomorrow is never promised.
+        </p>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 Daniel Jalali • Site built in loving memory of Eghbal Jalali
+  </footer>
+  <footer>
+    Contact us at eghbaljalali2@gmail.com
+  </footer>
+
+  <!-- REVEAL & SCROLL‑SPY SCRIPT -->
+  <script>
+    // reveal on scroll
+    const observer = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('show');
+          observer.unobserve(e.target);
+        }
+      });
+    },{threshold:.15});
+    document.querySelectorAll('.hidden').forEach(el=>observer.observe(el));
+
+    // scroll‑spy for TOC
+    const links = document.querySelectorAll('.toc a');
+    const sections = [...document.querySelectorAll('.story-section')];
+    window.addEventListener('scroll',()=>{
+      const pos = window.scrollY + window.innerHeight/3;
+      let current = '';
+      sections.forEach(sec=>{
+        if(pos >= sec.offsetTop && pos < sec.offsetTop + sec.offsetHeight){
+          current = sec.id;
+        }
+      });
+      links.forEach(l=>{
+        l.classList.toggle('active', l.getAttribute('href').slice(1) === current);
+      });
+    });
+  </script>
+</body>
+</html>
